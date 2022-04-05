@@ -11,7 +11,7 @@ final listProvider = FutureProvider<List<Post>>((ref) async {
   // Repositoryインスタンスを取得
   final repository = ref.read(repositoryProvider);
   // repository.fetchListメソッドの実行結果を返す
-  return repository.fetchPost();
+  return await repository.fetchPost();
 });
 
 class HomePage extends ConsumerWidget {
@@ -19,7 +19,7 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // listProviderの監視
-    final asyncValue = ref.read(listProvider);
+    final asyncValue = ref.watch(listProvider);
     return Scaffold(
       appBar: AppBar(title: const Text('Rest Api Sample')),
       body: Center(
@@ -30,7 +30,30 @@ class HomePage extends ConsumerWidget {
                 ? ListView(
                     children: data
                         .map(
-                          (Post post) => Text(post.title!),
+                          (Post post) => Card(
+                            child: GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return SimpleDialog(
+                                      title: Text(post.id.toString()),
+                                      children: [
+                                        SimpleDialogOption(
+                                          child: Text(post.body!),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                              child: ListTile(
+                                leading: Text(post.id.toString()),
+                                title: Text(post.title!),
+                                trailing: const Icon(Icons.more_vert),
+                              ),
+                            ),
+                          ),
                         )
                         .toList(),
                   )

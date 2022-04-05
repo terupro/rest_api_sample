@@ -3,20 +3,21 @@ import 'package:dio/dio.dart';
 
 // APIを呼び出し、データを取得する
 class PostApiClient {
-  dynamic fetchPost() async {
+  Future<List<Post>?> fetchPost() async {
     final dio = Dio();
     const url = "https://jsonplaceholder.typicode.com/posts";
     var response = await dio.get(url);
     if (response.statusCode == 200) {
       try {
-        var post = response.data
-            .map((dynamic i) => Post.fromJson(i as Map<String, dynamic>))
-            .toList();
-        print(post);
-        return post;
+        final datas = response.data as List<dynamic>;
+        final list = datas.map((e) => Post.fromJson(e)).toList();
+        return list;
       } catch (e) {
         print(e);
-        return null;
+        final datas = response.data as List<dynamic>;
+        final list = datas.map((e) => Post.fromJson(e)).toList();
+        return list;
+        ;
       }
     }
   }
